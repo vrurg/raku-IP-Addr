@@ -1,0 +1,29 @@
+{
+  "api": "0",
+  "authors": [
+    "cpan:VRURG <vrurg@cpan.org>"
+  ],
+  "depends": [
+    
+  ],
+  "description": "Later",
+  "license": "Artistic-2.0",
+  "meta-version": 0,
+  "name": "IP::Addr",
+  "perl": "6.c",
+  "provides": {
+    "IP::Addr": "lib/IP/Addr.pm6",
+    "IP::Addr::Const": "lib/IP/Addr/Const.pm6",
+    "IP::Addr::Handler": "lib/IP/Addr/Handler.pm6",
+    "IP::Addr::v4": "lib/IP/Addr/v4.pm6",
+    "IP::Addr::v6": "lib/IP/Addr/v6.pm6"
+  },
+  "resources": [
+    
+  ],
+  "source-url": "",
+  "tags": [
+    
+  ],
+  "version": "0.0.0"
+}
