@@ -11,6 +11,25 @@ enum SCOPE is export «:undetermined(-1) :public(0) software private host subnet
 
 enum IP-FORM is export «:unknown(0) ip cidr range»;
 
+role IPv4-Basic is export {
+    token ipv4 {
+        <octet> ** 4 % '.'
+    }
+    
+    token octet {
+        \d ** 1..3 <?{ $/.Int < 256  }>
+    }
+}
+
+class X::IPAddr::TypeCheck is Exception is export {
+    has @ip-list;
+    method message { "IP objects are of incompatible versions" }
+}
+
+class X::IPAddr::BadMappedV6 is Exception is export {
+    method message { "Bad IPv4-mapped IPv6 address" }
+}
+
 =begin pod
 
 =NAME    IP::Addr::Const

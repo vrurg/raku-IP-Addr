@@ -5,6 +5,8 @@ use v6.c;
 use Test;
 use IP::Addr;
 
+plan 10;
+
 my $ip = IP::Addr.new( "192.168.13.1" );
 
 is $ip.handler.WHO, "IP::Addr::v4", "handler class";

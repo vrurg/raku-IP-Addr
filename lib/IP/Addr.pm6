@@ -6,6 +6,7 @@ unit class IP::Addr;
 
 use IP::Addr::Handler;
 use IP::Addr::v4;
+use IP::Addr::v6;
 
 has IP::Addr::Handler $.handler handles **;
 
@@ -24,24 +25,38 @@ multi submethod TWEAK ( IP::Addr::Handler:D :$!handler ) {
 multi submethod TWEAK () { }
 
 proto method set (|) { {*}; self }
+
 multi method set( Str:D $source ) { samewith( :$source ) }
+
 multi method set( Str:D :$source! ) {
     if is-ipv4( $source ) {
         #note "Creating IPv4 hander";
         $!handler = IP::Addr::v4.new( :$source, :parent( self ) );
+    }
+    elsif is-ipv6( $source ) {
+        #note "Creating IPv6 hander";
+        $!handler = IP::Addr::v6.new( :$source, :parent( self ) );
     }
     else {
         die "Unknown address format";
     }
 }
 
+multi method set( Int:D :$ip!, :$v4?, :$v6?, *%params ) {
+    if $v4 {
+        $!handler = IP::Addr::v4.new( :$ip, :parent( self ), |%params );
+    }
+    elsif $v6 {
+        $!handler = IP::Addr::v6.new( :$ip, :parent( self ), |%params );
+    }
+    else {
+        die "IP version is not specified for Int address; perhaps :v4 or :v6 was forgotten";
+    }
+}
+
 method Str { $!handler.Str }
 multi method gist ( ::?CLASS:D: --> Str) { self.handler.Str }
 multi method gist ( ::?CLASS:U: ) { nextsame }
-
-multi postfix:<++> ( IP::Addr:D $ip ) is export {
-    $ip.inc
-}
 
 multi infix:<+> ( IP::Addr:D $ip, Int:D $count ) is export {
     $ip.dup.add( $count )
@@ -64,7 +79,7 @@ multi infix:<cmp> ( IP::Addr:D $a, Str:D $b ) is export {
 }
 
 multi infix:<cmp> ( Str:D $a, IP::Addr:D $b ) is export {
-    $b.dup.new( $a ).cmp( $b )
+    $b.dup-handler( $a ).cmp( $b )
 }
 
 multi infix:<eqv> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
@@ -76,7 +91,7 @@ multi infix:<eqv> ( IP::Addr:D $a, Str:D $b ) is export {
 }
 
 multi infix:<eqv> ( Str:D $a, IP::Addr:D $b ) is export {
-    $b.dup( $a ).eq( $b )
+    $b.dup-handler( $a ).eq( $b )
 }
 
 multi infix:<==> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
@@ -88,7 +103,7 @@ multi infix:<==> ( IP::Addr:D $a, Str:D $b ) is export {
 }
 
 multi infix:<==> ( Str:D $a, IP::Addr:D $b ) is export {
-    $b.dup( $a ).eq( $b )
+    $b.dup-handler( $a ).eq( $b )
 }
 
 multi infix:<< < >> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
@@ -100,7 +115,7 @@ multi infix:<< < >> ( IP::Addr:D $a, Str:D $b ) is export {
 }
 
 multi infix:<< < >> ( Str:D $a, IP::Addr:D $b ) is export {
-    $b.dup( $a ).lt( $b )
+    $b.dup-handler( $a ).lt( $b )
 }
 
 multi infix:<< <= >> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
@@ -112,7 +127,7 @@ multi infix:<< <= >> ( IP::Addr:D $a, Str:D $b ) is export {
 }
 
 multi infix:<< <= >> ( Str:D $a, IP::Addr:D $b ) is export {
-    my $ip-a = $b.dup( $a );
+    my $ip-a = $b.dup-handler( $a );
     $ip-a.lt( $b ) or $ip-a.eq( $b )
 }
 
@@ -125,7 +140,7 @@ multi infix:<< > >> ( IP::Addr:D $a, Str:D $b ) is export {
 }
 
 multi infix:<< > >> ( Str:D $a, IP::Addr:D $b ) is export {
-    $b.dup( $a ).gt( $b )
+    $b.dup-handler( $a ).gt( $b )
 }
 
 multi infix:<< >= >> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
@@ -137,7 +152,7 @@ multi infix:<< >= >> ( IP::Addr:D $a, Str:D $b ) is export {
 }
 
 multi infix:<< >= >> ( Str:D $a, IP::Addr:D $b ) is export {
-    my $ip-a = $b.dup( $a );
+    my $ip-a = $b.dup-handler( $a );
     $ip-a.gt( $b ) or $ip-a.eq( $b )
 }
 
@@ -150,19 +165,19 @@ multi infix:<(cont)> ( IP::Addr:D $a, Str:D $b ) is export {
 }
 
 multi infix:<(cont)> ( Str:D $a, IP::Addr:D $b ) is export {
-    $b.dup.new( $a ).contains( $b )
+    $b.dup-handler( $a ).contains( $b )
 }
 
-multi infix:<∋> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<⊇> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.contains( $b )
 }
 
-multi infix:<∋> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<⊇> ( IP::Addr:D $a, Str:D $b ) is export {
     $a.contains( $b )
 }
 
-multi infix:<∋> ( Str:D $a, IP::Addr:D $b ) is export {
-    $b.dup.new( $a ).contains( $b )
+multi infix:<⊇> ( Str:D $a, IP::Addr:D $b ) is export {
+    $b.dup-handler( $a ).contains( $b )
 }
 
 multi infix:<⊆> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
@@ -170,22 +185,32 @@ multi infix:<⊆> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
 }
 
 multi infix:<⊆> ( IP::Addr:D $a, Str:D $b ) is export {
-    $a.dup( $b ).contains( $a )
+    $a.dup-handler( $b ).contains( $a )
 }
 
 multi infix:<⊆> ( Str:D $a, IP::Addr:D $b ) is export {
     $b.contains( $a )
 }
 
-multi method dup {
-    self.WHAT.new( :handler( $.handler.clone ) );
+proto method dup (|) {
+    my $dup = {*};
+    $dup.handler.parent = $dup;
+    $dup
 }
-multi method dup ( |args ) {
-    self.WHAT.new( |args )
+
+multi method dup {
+    self.clone( :handler( $.handler.clone ) )
+}
+
+multi method dup ( :$handler! ) {
+    self.clone( :$handler )
 }
 
 method dup-handler( |args ) {
-    self.WHAT.new( :handler( $.handler.WHAT.new( |args ) ) )
+    my $dup = self.clone( :handler( $.handler.clone ) );
+    $dup.handler.parent = $dup;
+    $dup.handler.set( |args );
+    $dup
 }
 
 # ---- Iterable ----

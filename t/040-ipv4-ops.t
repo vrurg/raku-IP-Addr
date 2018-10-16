@@ -9,18 +9,21 @@ use IP::Addr;
 plan 2;
 
 subtest "CIDR" => {
-    plan 19;
+    plan 22;
 
     my $ip = IP::Addr.new( "10.11.12.13/24" );
 
-    is $ip++, "10.11.12.14/24", "increment";
+    is ++$ip, "10.11.12.14/24", "increment";
+    is --$ip, "10.11.12.13/24", "decrement";
+    is $ip++, "10.11.12.14/24", "post-increment";
+    is $ip--, "10.11.12.13/24", "post-decrement";
 
     my $ip2 = $ip + 10;
-    is $ip2, "10.11.12.24/24", "addition";
+    is $ip2, "10.11.12.23/24", "addition";
     nok $ip.WHICH === $ip2.WHICH, "addition generates a new object";
 
     $ip2 = $ip - 10;
-    is $ip2, "10.11.12.4/24", "subtraction";
+    is $ip2, "10.11.12.3/24", "subtraction";
     nok $ip.WHICH === $ip2.WHICH, "subtraction generates a new object";
 
     $ip2 = $ip - 20;
@@ -35,10 +38,10 @@ subtest "CIDR" => {
     ok $ip2 <= $ip2, "network is <= than itself"; 
     ok $ip2 <= "10.11.12.0/24", "network is <= then itself in Str form"; 
     is $ip cmp "10.11.12.20", Less, "cmp higher";
-    is $ip cmp "10.11.12.14", Same, "cmp with same";
+    is $ip cmp "10.11.12.13", Same, "cmp with same";
     is $ip cmp "10.11.12.1", More, "cmp with lower";
-    nok $ip eqv "10.11.12.14", "CIDR isn't eqv to plain IP";
-    ok $ip eqv "10.11.12.14/24", "eqv to same CIDR";
+    nok $ip eqv "10.11.12.13", "CIDR isn't eqv to plain IP";
+    ok $ip eqv "10.11.12.13/24", "eqv to same CIDR";
 }
 
 subtest "Range" => {
@@ -57,8 +60,8 @@ subtest "Range" => {
     ok $range.overlaps( "172.1.0.100-172.1.0.200" ), "overlaps with contained range";
     ok $range.overlaps( "172.1.0.9-172.1.1.100" ), "overlaps with containing range";
     nok $range.overlaps( "172.1.1.10-172.1.1.19" ), "doesn't overlap";
-    ok $range ∋ "172.1.1.1", "IP is in range";
-    nok $range ∋ "172.1.1.100", "IP isn't in range";
+    ok $range ⊇ "172.1.1.1", "IP is in range";
+    nok $range ⊇ "172.1.1.100", "IP isn't in range";
 }
 
 done-testing;

@@ -3,7 +3,7 @@
 use v6.c;
 
 use IP::Addr::Handler;
-use IP::Addr::Const;
+use IP::Addr::Common;
 
 unit class IP::Addr::v4 does IP::Addr::Handler;
 
@@ -85,11 +85,11 @@ submethod TWEAK ( :$!parent ) { }
 
 sub valid-dotted-subnet ( $m ) {
     my $mask = 0;
-    $mask = ( $mask +< 8 ) + $_.Int for $m<ip><octet>;
+    $mask = ( $mask +< 8 ) + $_.Int for $m<ipv4><octet>;
     $mask.base(2) ~~ / ^ '1'* '0'* $ /
 }
 
-grammar IPv4-Grammar {
+grammar IPv4-Grammar does IPv4-Basic {
 
     method TOP (Bool :$validate = False) {
         my $*VALIDATE-IP = $validate;
@@ -97,27 +97,19 @@ grammar IPv4-Grammar {
     }
 
     rule ip-variants {
-        <range> | <cidr> | <ip>
-    }
-
-    token ip {
-        <octet> ** 4 % '.'
-    }
-    
-    token octet {
-        \d ** 1..3 <?{ $*VALIDATE-IP ?? ( $/.Int < 256 ) !! True }>
+        <range> | <cidr> | <ipv4>
     }
 
     rule range {
-        <ip> '-' <ip>
+        <ipv4> '-' <ipv4>
     }
 
     token cidr {
-        <ip> '/' <prefix-len>
+        <ipv4> '/' <prefix-len>
     }
 
     token prefix-len {
-            <ip> <?{ $*VALIDATE-IP ?? valid-dotted-subnet( $/ ) !! True }>
+            <ipv4> <?{ $*VALIDATE-IP ?? valid-dotted-subnet( $/ ) !! True }>
             | <bits>
     }
 
@@ -127,27 +119,27 @@ grammar IPv4-Grammar {
 }
 
 class v4-actions {
-    has $.ip-obj;
+    has $.ip-obj; # The parent IP::Handler object
 
     method TOP ( $m ) { $m.make( $m.ast ) }
     method ip-variants ( $m ) {
-        with $m<ip> { $m.make( [ ip, .ast ] ) }
+        with $m<ipv4> { $m.make( [ ip, %( ip => .ast ) ] ) }
         with $m<range> { $m.make( [ range,  .ast ] ) }
         with $m<cidr> { $m.make( [ cidr, .ast ] ) }
     }
     method octet ( $m ) { $m.make( $m.Int ) }
-    method ip ( $m ) { 
-        $m.make( IP::Addr::v4.to-int( $m<octet>.map: *.ast ) )
+    method ipv4 ( $m ) { 
+        $m.make( $.ip-obj.to-int( $m<octet>.map: *.ast ) )
     }
-    method range ( $m ) { $m.make( { :first( $m<ip>[0].ast ), :last( $m<ip>[1].ast ) } ) }
+    method range ( $m ) { $m.make( { :first( $m<ipv4>[0].ast ), :last( $m<ipv4>[1].ast ) } ) }
 
-    method cidr ( $m ) { $m.make( { :ip( $m<ip>.ast ), :prefix-len( $m<prefix-len>.ast ) } ) }
+    method cidr ( $m ) { $m.make( { :ip( $m<ipv4>.ast ), :prefix-len( $m<prefix-len>.ast ) } ) }
 
     method bits ( $m ) { $m.make( $m.Int ) }
-    multi method prefix-len ( $m where so *<ip> ) {
-        #note "p-len from ip: ", $m<ip>.ast;
-        #note "len from mask: ", $.ip-obj!IP::Addr::v4::mask2pfx( $m<ip>.ast );
-        $m.make( $.ip-obj!IP::Addr::v4::mask2pfx( $m<ip>.ast ) );
+    multi method prefix-len ( $m where so *<ipv4> ) {
+        #note "p-len from ip: ", $m<ipv4>.ast;
+        #note "len from mask: ", $.ip-obj!IP::Addr::v4::mask2pfx( $m<ipv4>.ast );
+        $m.make( $.ip-obj!IP::Addr::v4::mask2pfx( $m<ipv4>.ast ) );
     }
     multi method prefix-len( $m where so *<bits> ) {
         #note "p-len from bits";
@@ -160,49 +152,27 @@ our sub is-ipv4 ( Str $ip --> Bool ) is export {
     so IPv4-Grammar.parse( $ip, args => \(:validate) );
 }
 
-method info {
+method ip-classes ( --> Array ) {
     state @info;
     
     once {
         my @unsorted;
         for %addr-class.kv -> $net, $info {
-            my $ip-net = $.parent.dup( $net );
+            my $ip-net = $.parent.dup-handler( $net );
             @info.push: { :net($ip-net), :$info };
         }
     }
 
-    for @info -> $info {
-        if self.overlaps( $info<net> ) {
-            if $info<net>.contains( self ) {
-                return $info<info>;
-            }
-            return { scope => undetermined, description => "range overlaps with but not contained by a reserved range" }
-        }
-    }
-
-    return { scope => public, description => "public IP" }
+    @info
 }
 
-proto method to-int (|) { * }
-multi method to-int ( @octets where *.elems == 4 --> Int ) { 
-    my Int $int-ip = 0;
-    $int-ip = $int-ip * 256 + $_ for @octets; 
-    self.bitcap( $int-ip ) 
-}
-multi method to-int ( *@octets where *.elems == 4 --> Int ) { samewith( @octets ) }
+method to-octets ( Int:D $addr --> List ) { self.to-n-tets( $addr ) }
 
-method to-octets ( Int:D $addr is copy --> List ) {
-    my Int @octs;
-    for 3...0 -> $i {
-        @octs[$i] = self.bitcap( $addr +& 0xff, 8 );
-        $addr +>= 8;
-    }
-    @octs.List
+method !octets2str( @octs --> Str ) {
+    @octs.join('.') 
 }
 
-method !octets2str( @octs --> Str ) { @octs.join('.') }
-
-method int2str( Int $addr ) { self!octets2str( self.to-octets( $addr ) ) }
+method int2str( Int $addr, *%params --> Str ) { self!octets2str( self.to-n-tets( $addr ), |%params ) }
 
 method addr-len { 32 }
 
@@ -232,11 +202,18 @@ multi method set ( Int:D :$first!, Int:D :$last! ) {
 
 multi method set( Int:D :$ip! ) {
     #note "Set from Int ip";
-    self!recalc( [ ip, $ip ] )
+    self!recalc( [ ip, { ip => $ip } ] )
 }
 
-method prefix { self.int2str( $!addr ) ~ "/" ~ self.prefix-len }
+multi method set( Int:D @octets where *.elems == $!n-tet-count ) {
+    samewith( self.to-int( @octets ) )
+}
+
+method prefix {
+    self.int2str( $!addr ) ~ "/" ~ self.prefix-len 
+}
 method version ( --> 4 ) {}
+method n-tets ( --> 4 ) { }
 
 =begin pod
 

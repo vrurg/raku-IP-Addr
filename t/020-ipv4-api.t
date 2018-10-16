@@ -5,7 +5,7 @@ use v6.c;
 use Test;
 
 use IP::Addr;
-use IP::Addr::Const;
+use IP::Addr::Common;
 
 plan 2;
 
