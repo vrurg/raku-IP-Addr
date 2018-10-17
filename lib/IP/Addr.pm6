@@ -1,5 +1,21 @@
 #! /usr/bin/env false
 
+=begin pod
+
+=NAME    IP::Addr
+=AUTHOR  cpan:VRURG <vrurg@cpan.org>
+=VERSION 0.0.0
+
+=head1 Synopsis
+
+=head1 Description
+
+=head1 Examples
+
+=head1 See also
+
+=end pod
+
 use v6.c;
 
 unit class IP::Addr;
@@ -237,20 +253,14 @@ method each {
     IPIterable.new( :ip( self ) )
 }
 
-=begin pod
-
-=NAME    IP::Addr
-=AUTHOR  cpan:VRURG <vrurg@cpan.org>
-=VERSION 0.0.0
-
-=head1 Synopsis
-
-=head1 Description
-
-=head1 Examples
-
-=head1 See also
-
-=end pod
+method Supply {
+    #my $ip = self.dup-handler( :first( $.handler.int-first-ip ), :last( $.handler.int-last-ip ) );
+    my $ip = self.dup;
+    supply {
+        repeat {
+            emit $ip;
+        } while $ip = $ip.next;
+    }
+}
 
 # vim: ft=perl6 et sw=4
