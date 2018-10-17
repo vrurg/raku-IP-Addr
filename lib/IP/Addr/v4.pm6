@@ -196,37 +196,11 @@ method int2str( Int $addr, *%params --> Str ) { self!octets2str( self.to-n-tets(
 
 method addr-len { 32 }
 
-proto method set (|) {
-    self!reset; 
-    {*}
-    self
-}
-
-multi method set ( Str:D $source ) { samewith( :$source ) }
 multi method set ( Str:D :$!source! ) {
     #note "Set from Str source";
     my $m = IPv4-Grammar.parse( $!source, :actions( v4-actions.new( :ip-obj( self ) ) ), :args( :validate ) );
     # TODO Exception if parse failed
     self!recalc( $m.ast );
-}
-
-multi method set ( Int:D :$ip!, Int:D :$prefix-len! ) {
-    #note "Set from Int ip / Int prefix";
-    self!recalc( [ cidr, { :$ip, :$prefix-len } ] )
-}
-
-multi method set ( Int:D :$first!, Int:D :$last! ) {
-    #note "Set from Int first / Int last";
-    self!recalc( [ range,  { :$first, :$last } ] )
-}
-
-multi method set( Int:D :$ip! ) {
-    #note "Set from Int ip";
-    self!recalc( [ ip, { ip => $ip } ] )
-}
-
-multi method set( Int:D @octets where *.elems == $!n-tet-count ) {
-    samewith( self.to-int( @octets ) )
 }
 
 method prefix {

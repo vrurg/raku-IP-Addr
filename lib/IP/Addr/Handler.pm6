@@ -25,7 +25,6 @@ has Int $!addr-bits = self.addr-len; # 32 for IPv4 and 128 for IPv6
 has Int $!n-tet-count = self.n-tets;
 has Int $!n-tet-size = (2 ** ( $!addr-bits / $!n-tet-count )).Int; # Size of octets or hextets in address (max-value+1)
 
-method set { ... }
 method prefix { ... }
 method version { ... }
 method ip-classes { ... }
@@ -36,6 +35,34 @@ method int2str ( Int ) { ... }
 method addr-len { ... }
 #| Returns number of octets/hextets in address
 method n-tets { ... }
+
+proto method set (|) {
+    self!reset; 
+    {*}
+    self
+}
+
+multi method set ( Str:D $source ) { samewith( :$source ) }
+
+multi method set ( Int:D :$ip!, Int:D :$prefix-len! ) {
+    #note "Set from Int ip / Int prefix";
+    self!recalc( [ cidr, { :$ip, :$prefix-len } ] )
+}
+
+multi method set ( Int:D :$first!, Int:D :$last!, Int :$ip? ) {
+    #note "Set from Int first / Int last";
+    self!recalc( [ range,  { :$first, :$last } ] );
+    $!addr = $ip;
+}
+
+multi method set( Int:D :$ip! ) {
+    #note "Set from Int ip";
+    self!recalc( [ ip, { ip => $ip } ] )
+}
+
+multi method set( Int:D @octets where *.elems == $!n-tet-count ) {
+    samewith( self.to-int( @octets ) )
+}
 
 method bitcap( Int $i, Int $bits = self.addr-len ) is export {
     $i +& %bitcap-mask{ $bits } 

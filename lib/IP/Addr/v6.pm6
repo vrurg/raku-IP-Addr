@@ -82,10 +82,10 @@ has Bool $.mapped is rw = False;
 #use Grammar::Tracer;
 
 method new ( :$parent, |args ) {
-    self.bless( :$parent ).set( |args )
+    self.bless( :$parent, |args.hash ).set( |args )
 }
 
-submethod TWEAK ( :$!parent ) { }
+submethod TWEAK ( :$!parent, :$!abbreviated = False, :$!compact = False, :$!mapped = False ) { }
 
 grammar IPv6-Grammar does IPv4-Basic {
     rule TOP {
@@ -253,13 +253,6 @@ class v6-actions {
     }
 }
 
-proto method set (|) {
-    self!reset; 
-    {*}
-    self
-}
-
-multi method set ( Str:D $source ) { samewith( :$source ) }
 multi method set ( Str:D :$!source! ) {
     #note "Set from Str source";
     my $m = IPv6-Grammar.parse( $!source, :actions( v6-actions.new( :ip-obj( self ) ) ) );
@@ -267,21 +260,6 @@ multi method set ( Str:D :$!source! ) {
     #note "SET FROM AST:", $m.ast, " // ", $m.ast[1]<ip>.base(16);
     # TODO Exception if parse failed
     self!recalc( $m.ast );
-}
-
-multi method set ( Int:D :$ip!, Int:D :$prefix-len! ) {
-    #note "Set from Int ip / Int prefix";
-    self!recalc( [ cidr, { :$ip, :$prefix-len } ] )
-}
-
-multi method set ( Int:D :$first!, Int:D :$last! ) {
-    #note "Set from Int first / Int last";
-    self!recalc( [ range,  { :$first, :$last } ] )
-}
-
-multi method set( Int:D :$ip! ) {
-    #note "Set from Int ip";
-    self!recalc( [ ip, { :$ip } ] )
 }
 
 method n-tets ( --> 8 ) { }

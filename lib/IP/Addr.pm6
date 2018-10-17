@@ -58,12 +58,12 @@ multi method set( Str:D :$source! ) {
     }
 }
 
-multi method set( Int:D :$ip!, :$v4?, :$v6?, *%params ) {
+multi method set( :$v4?, :$v6?, *%params ) {
     if $v4 {
-        $!handler = IP::Addr::v4.new( :$ip, :parent( self ), |%params );
+        $!handler = IP::Addr::v4.new( :parent( self ), |%params );
     }
     elsif $v6 {
-        $!handler = IP::Addr::v6.new( :$ip, :parent( self ), |%params );
+        $!handler = IP::Addr::v6.new( :parent( self ), |%params );
     }
     else {
         die "IP version is not specified for Int address; perhaps :v4 or :v6 was forgotten";
