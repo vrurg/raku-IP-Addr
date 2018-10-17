@@ -25,5 +25,6 @@
   "tags": [
     
   ],
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "source-url": "git@github.com:vrurg/perl6-IP-Addr.git"
 }
