@@ -5,14 +5,14 @@ use v6.c;
 use Test;
 use IP::Addr;
 
-plan 10;
+plan 12;
 
 my $ip = IP::Addr.new( "2001::da:beef" );
 
 is $ip.handler.WHO, "IP::Addr::v6", "handler class";
 
 is ~$ip, "2001::da:beef", "stringification";
-is "IP inline: $ip", "IP inline: 2001::da:beef";
+is "IP inline: $ip", "IP inline: 2001::da:beef", "string inlining";
 
 $ip = IP::Addr.new( "2002::da:beef/33" );
 
@@ -46,6 +46,11 @@ for $ip.first.each -> $i {
 my @expect = (0xef..0xff).map( { "2003::da:be{$_.fmt("%x")}/122" } );
 
 is-deeply @ips, @expect, "iterator";
+
+$ip = IP::Addr.new( "2002::da:bef0-2002::da:beff" );
+$ip2 = IP::Addr.new( :v6, :first( $ip.int-first-ip ), :last( $ip.int-last-ip ), :ip( $ip.int-first-ip + 3 ), :abbreviated, :compact );
+ok $ip2.abbreviated, ":abbreviated attribute passed over to handler";
+is $ip2.ip, "2002::da:bef3", "IPv6 range with current IP";
 
 done-testing;
 # vim: ft=perl6 et sw=4

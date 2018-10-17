@@ -52,7 +52,7 @@ multi method set ( Int:D :$ip!, Int:D :$prefix-len! ) {
 multi method set ( Int:D :$first!, Int:D :$last!, Int :$ip? ) {
     #note "Set from Int first / Int last";
     self!recalc( [ range,  { :$first, :$last } ] );
-    $!addr = $ip;
+    $!addr = $ip if $ip.defined && ( $ip >= $!first-addr ) && ( $ip <= $!last-addr );
 }
 
 multi method set( Int:D :$ip! ) {
@@ -72,30 +72,37 @@ method ip       { $.parent.dup-handler( ip => $!addr ) }
 method first-ip { $.parent.dup-handler( ip => $!first-addr ) }
 method last-ip  { $.parent.dup-handler( ip => $!last-addr ) }
 method network  { $.parent.dup-handler( ip => $!first-addr, :$!prefix-len ) }
-method mask     { self.int2str( $!mask ) }
-method wildcard { self.int2str( $!wildcard ) }
-method size     { $!last-addr - $!first-addr + 1 }
+method mask     ( --> Str ) { self.int2str( $!mask ) }
+method wildcard ( --> Str ) { self.int2str( $!wildcard ) }
+method size     ( --> Int ) { $!last-addr - $!first-addr + 1 }
 
-method int-ip { $!addr }
-method int-first-ip { $!first-addr }
-method int-last-ip { $!last-addr }
-method int-mask { $!mask }
-method int-wildcard { $!wildcard }
+method int-ip       ( --> Int ) { $!addr }
+method int-first-ip ( --> Int ) { $!first-addr }
+method int-last-ip  ( --> Int ) { $!last-addr }
+method int-mask     ( --> Int ) { $!mask }
+method int-wildcard ( --> Int ) { $!wildcard }
+
+method !fit-into-range {
+    return if $!form == ip; # No need to fix a single IP
+    $!addr = $!last-addr if $!addr > $!last-addr;
+    $!addr = $!first-addr if $!addr < $!first-addr;
+}
 
 method inc {
-    $!addr++ if $!addr < $!last-addr;
+    $!addr++;
+    self!fit-into-range;
     $.parent
 }
 method succ { self.inc }
 method dec {
-    $!addr-- if $!addr > $!first-addr;
+    $!addr--;
+    self!fit-into-range;
     $.parent
 }
 method pred { self.dec }
 method add ( Int $count ) {
     $!addr += $count;
-    $!addr = $!last-addr if $!addr > $!last-addr;
-    $!addr = $!first-addr if $!addr < $!first-addr;
+    self!fit-into-range;
     self.parent
 }
 
@@ -202,6 +209,32 @@ method next {
 method prev {
     return Nil if $!addr <= $!first-addr;
     $.parent.dup.dec
+}
+
+method next-network {
+    return Nil unless $!form == cidr;
+
+    $!parent.dup-handler( :ip( self.network.int-first-ip + self.size ), :prefix-len( $!prefix-len ) )
+}
+
+method prev-network {
+    return Nil unless $!form == cidr;
+
+    $!parent.dup-handler( :ip( self.network.int-first-ip - self.size ), :prefix-len( $!prefix-len ) )
+}
+
+method next-range {
+    return Nil unless $!form == range;
+
+    my $size = self.size;
+    $!parent.dup-handler( :first( $!first-addr + $size ), :last( $!last-addr + $size ) );
+}
+
+method prev-range {
+    return Nil unless $!form == range;
+
+    my $size = self.size;
+    $!parent.dup-handler( :first( $!first-addr - $size ), :last( $!last-addr - $size ) );
 }
 
 proto method to-int (|) { * }
