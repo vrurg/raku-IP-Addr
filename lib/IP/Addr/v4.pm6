@@ -152,6 +152,26 @@ our sub is-ipv4 ( Str $ip --> Bool ) is export {
     so IPv4-Grammar.parse( $ip, args => \(:validate) );
 }
 
+method broadcast {
+    return Nil unless $!form == cidr;
+    $.parent.dup-handler( ip => $!last-addr )
+}
+
+method next-host {
+    return Nil if ( $!form == cidr ) && ( $!addr >= ( $!last-addr - 1 ) );
+    self.next;
+}
+
+method prev-host {
+    return Nil if ( $!form == cidr ) && ( $!addr <= ( $!first-addr + 1 ) );
+    self.prev
+}
+
+method int-broadcast {
+    return Nil unless $!form == cidr;
+    $!last-addr
+}
+
 method ip-classes ( --> Array ) {
     state @info;
     

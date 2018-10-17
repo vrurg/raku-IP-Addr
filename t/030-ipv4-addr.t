@@ -5,7 +5,7 @@ use v6.c;
 use Test;
 use IP::Addr;
 
-plan 10;
+plan 15;
 
 my $ip = IP::Addr.new( "192.168.13.1" );
 
@@ -44,6 +44,21 @@ for $ip.first.each -> $i {
 my @expect = (10..63).map( { "192.168.13.$_/26" } );
 
 is-deeply @ips, @expect, "iterator";
+
+$ip = IP::Addr.new( "10.11.12.13/28" );
+is ~$ip.broadcast, "10.11.12.15", "broadcast address";
+
+$ip2 = $ip.next-host;
+is $ip2.ip, "10.11.12.14", "next-host available";
+$ip2 = $ip2.next-host;
+nok $ip2.defined, "next-host is not available";
+
+$ip = IP::Addr.new( "10.11.12.2/28" );
+
+$ip2 = $ip.prev-host;
+is $ip2.ip, "10.11.12.1", "prev-host available";
+$ip2 = $ip2.prev-host;
+nok $ip2.defined, "prev-host is not available";
 
 done-testing;
 # vim: ft=perl6 et sw=4
