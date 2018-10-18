@@ -3,7 +3,6 @@
 =begin pod
 
 =NAME    IP::Addr - dealing with IPv4/IPv6 addresses
-=VERSION 0.0.0
 
 =head1 SYNOPSIS
 
