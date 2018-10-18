@@ -100,7 +100,7 @@ method dec {
     $.parent
 }
 method pred { self.dec }
-method add ( Int $count ) {
+method add ( Int:D $count ) {
     $!addr += $count;
     self!fit-into-range;
     self.parent
@@ -118,7 +118,7 @@ multi method eq ( ::?CLASS:D $ip --> Bool ) {
         if $!form == range {
             return so ( ( $!first-addr == $ip.int-first-ip ) and ( $!last-addr == $ip.int-last-ip ) );
         }
-        return so ( ( $!addr == $ip.int-ip ) and ( $!mask == $ip.int-mask ) )
+        return so ( ( $!addr == $ip.int-ip ) and ( $!prefix-len == $ip.prefix-len ) )
     }
     False;
 }
@@ -186,7 +186,6 @@ multi method overlaps ( $ip where { $_.defined and $_ ~~ IP::Addr } --> Bool ) {
 
 method first {
     my $dup;
-    #note "Setting first";
     given $!form {
         when range {
             return $.parent.dup-handler( :first( $!first-addr ), :last( $!last-addr ) );
@@ -223,6 +222,7 @@ method prev-network {
     $!parent.dup-handler( :ip( self.network.int-first-ip - self.size ), :prefix-len( $!prefix-len ) )
 }
 
+# TODO Check for IP range start/end
 method next-range {
     return Nil unless $!form == range;
 
@@ -245,7 +245,7 @@ multi method to-int ( @ntets where { $_.elems ≤ self.n-tets } --> Int ) {
 }
 multi method to-int ( *@ntets where { $_.elems ≤ self.n-tets } --> Int ) { samewith( @ntets ) }
 
-method to-n-tets ( Int $addr is copy = $!addr --> List ) {
+method to-n-tets ( Int:D $addr is copy = $!addr --> List ) {
     my @tets;
     my $tet-bits = ( self.addr-len / self.n-tets ).Int;
     for (self.n-tets - 1)...0 -> $i {
