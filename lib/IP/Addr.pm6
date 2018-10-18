@@ -172,6 +172,19 @@ multi infix:<< >= >> ( Str:D $a, IP::Addr:D $b ) is export {
     $ip-a.gt( $b ) or $ip-a.eq( $b )
 }
 
+multi infix:<< ≥ >> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+    $a.gt( $b ) or $a.eq( $b )
+}
+
+multi infix:<< ≥ >> ( IP::Addr:D $a, Str:D $b ) is export {
+    $a.gt( $b ) or $a.eq( $b )
+}
+
+multi infix:<< ≥ >> ( Str:D $a, IP::Addr:D $b ) is export {
+    my $ip-a = $b.dup-handler( $a );
+    $ip-a.gt( $b ) or $ip-a.eq( $b )
+}
+
 multi infix:<(cont)> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.contains( $b )
 }
