@@ -203,7 +203,10 @@ multi method set ( Str:D :$!source! ) {
     self!recalc( $m.ast );
 }
 
-method prefix {
+method prefix ( :$mask ) {
+    if $mask {
+        return self.int2str( $!addr ) ~ "/" ~ self.int2str( $!mask )
+    }
     self.int2str( $!addr ) ~ "/" ~ self.prefix-len 
 }
 method version ( --> 4 ) {}
