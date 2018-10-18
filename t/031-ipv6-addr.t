@@ -26,15 +26,15 @@ is ~$ip, "2002::da:bef0/33", "after increment";
 
 my $ip2 = $ip.first;
 
-is ~$ip2, "2002::da:bef0/33", "first for single IP is the IP itself";
+is ~$ip2, "2002::/33", "first";
 
 $ip2 = $ip2.next;
 
-is ~$ip2, "2002::da:bef1/33", "next IP";
+is ~$ip2, "2002::1/33", "next IP";
 
 $ip2 = $ip2.prev;
 
-is ~$ip2, "2002::da:bef0/33", "prev IP";
+is ~$ip2, "2002::/33", "prev IP";
 
 # Narrow the CIDR or test would take forever to complete
 $ip = IP::Addr.new( "2003::da:beef/122" );
@@ -43,7 +43,7 @@ for $ip.first.each -> $i {
     push @ips, ~$i;
 }
 
-my @expect = (0xef..0xff).map( { "2003::da:be{$_.fmt("%x")}/122" } );
+my @expect = (0xc0..0xff).map( { "2003::da:be{$_.fmt("%x")}/122" } );
 
 is-deeply @ips, @expect, "iterator";
 
