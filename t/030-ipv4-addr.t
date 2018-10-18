@@ -6,7 +6,7 @@ use Test;
 use IP::Addr;
 use IP::Addr::Common;
 
-plan 27;
+plan 33;
 
 my $ip = IP::Addr.new( "192.168.13.1" );
 
@@ -19,6 +19,9 @@ is $ip.inc.ip, "192.168.13.2", "increment on single IP";
 
 $ip = IP::Addr.new( "192.168.13.9/26" );
 
+is $ip.prefix, "192.168.13.9/26", "prefix representation";
+is $ip.prefix( :mask ), "192.168.13.9/255.255.255.192", "mask representation";
+
 is $ip.network, "192.168.13.0/26", "network";
 
 is $ip, "192.168.13.9/26", "before increment";
@@ -29,24 +32,28 @@ is ~$ip, "192.168.13.10/26", "after increment";
 
 my $ip2 = $ip.first;
 
-is ~$ip2, "192.168.13.10/26", "first for single IP is the IP itself";
+is ~$ip2, "192.168.13.0/26", "first for single IP is the IP itself";
 
 $ip2 = $ip2.next;
 
-is ~$ip2, "192.168.13.11/26", "next IP";
+is ~$ip2, "192.168.13.1/26", "next IP";
 
 $ip2 = $ip2.prev;
 
-is ~$ip2, "192.168.13.10/26", "prev IP";
+is ~$ip2, "192.168.13.0/26", "prev IP";
 
 my @ips;
 for $ip.first.each -> $i {
     push @ips, ~$i;
 }
 
-my @expect = (10..63).map( { "192.168.13.$_/26" } );
+my @expect = (0..63).map( { "192.168.13.$_/26" } );
 
 is-deeply @ips, @expect, "iterator";
+is-deeply $ip.first.list.map( { ~$_ } ), @expect.List, ".first.list method";
+
+@expect = (10..63).map( { "192.168.13.$_/26" } );
+is-deeply $ip.list.map( { ~$_ } ), @expect.List, ".list method";
 
 $ip = IP::Addr.new( "10.11.12.13/28" );
 is ~$ip.broadcast, "10.11.12.15", "broadcast address";
@@ -91,6 +98,16 @@ is ~$ip, "192.0.2.2/24", "CIDR created from named params";
 $ip = IP::Addr.new( :v4, first => 3221225984, last => 3221225994, ip => 3221225986 );
 is ~$ip, "192.0.2.0-192.0.2.10", "range created from named params";
 is $ip.ip, "192.0.2.2", "range IP is set properly";
+
+$ip = IP::Addr.new( "0.0.0.0" );
+$ip--;
+is ~$ip, "255.255.255.255", "decrement of 0.0.0.0";
+
+$ip = IP::Addr.new( "0.0.0.0" ) - 2;
+is ~$ip, "255.255.255.254", "0.0.0.0 - 2";
+
+.say for IP::Addr.new( "192.0.2.2/29" ).each;
+for IP::Addr.new( "192.0.2.2/29" ).first.each { say $_ }
 
 done-testing;
 # vim: ft=perl6 et sw=4

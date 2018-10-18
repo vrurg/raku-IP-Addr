@@ -5,7 +5,7 @@ use v6.c;
 use Test;
 use IP::Addr;
 
-plan 12;
+plan 14;
 
 my $ip = IP::Addr.new( "2001::da:beef" );
 
@@ -51,6 +51,13 @@ $ip = IP::Addr.new( "2002::da:bef0-2002::da:beff" );
 $ip2 = IP::Addr.new( :v6, :first( $ip.int-first-ip ), :last( $ip.int-last-ip ), :ip( $ip.int-first-ip + 3 ), :abbreviated, :compact );
 ok $ip2.abbreviated, ":abbreviated attribute passed over to handler";
 is $ip2.ip, "2002::da:bef3", "IPv6 range with current IP";
+
+$ip = IP::Addr.new( "::" );
+$ip--;
+is $ip, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "decrement of ::";
+
+$ip = IP::Addr.new( "::" ) - 2;
+is $ip, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:fffe", ":: - 2";
 
 done-testing;
 # vim: ft=perl6 et sw=4

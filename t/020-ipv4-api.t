@@ -36,6 +36,7 @@ subtest "Base methods" => {
                 first-ip => "127.0.0.0",
                 last-ip => "127.7.255.255",
                 wildcard => "0.7.255.255",
+                size => 524288,
             ],
         },
         {
@@ -49,6 +50,7 @@ subtest "Base methods" => {
                 first-ip => "127.0.0.0",
                 last-ip => "127.0.15.255",
                 wildcard => "0.0.15.255",
+                size => 4096,
             ],
         },
         {

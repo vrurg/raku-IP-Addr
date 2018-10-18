@@ -36,7 +36,7 @@ subtest "CIDR" => {
     nok $ip ⊆ "600e::/112", "doesn't belong to a network";
     ok $ip2 < $ip, "network is < than orig";
     ok $ip2 <= $ip2, "network is <= than itself"; 
-    ok $ip2 <= "600d::f00d/112", "network is <= then itself in Str form"; 
+    ok $ip2 ≤ "600d::f00d/112", "network is <= then itself in Str form"; 
     is $ip cmp "600f::", Less, "cmp higher";
     is $ip cmp "600d::f00d", Same, "cmp with same";
     is $ip cmp "600a::", More, "cmp with lower";

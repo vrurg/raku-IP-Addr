@@ -9,7 +9,7 @@ use IP::Addr;
 plan 2;
 
 subtest "CIDR" => {
-    plan 22;
+    plan 23;
 
     my $ip = IP::Addr.new( "10.11.12.13/24" );
 
@@ -21,6 +21,8 @@ subtest "CIDR" => {
     my $ip2 = $ip + 10;
     is $ip2, "10.11.12.23/24", "addition";
     nok $ip.WHICH === $ip2.WHICH, "addition generates a new object";
+    $ip2 += 2;
+    is $ip2, "10.11.12.25/24", "+=";
 
     $ip2 = $ip - 10;
     is $ip2, "10.11.12.3/24", "subtraction";
@@ -36,7 +38,7 @@ subtest "CIDR" => {
     nok $ip ⊆ "10.11.13.0/24", "doesn't belong to a network";
     ok $ip2 < $ip, "network is < than orig";
     ok $ip2 <= $ip2, "network is <= than itself"; 
-    ok $ip2 <= "10.11.12.0/24", "network is <= then itself in Str form"; 
+    ok $ip2 ≤ "10.11.12.0/24", "network is <= then itself in Str form"; 
     is $ip cmp "10.11.12.20", Less, "cmp higher";
     is $ip cmp "10.11.12.13", Same, "cmp with same";
     is $ip cmp "10.11.12.1", More, "cmp with lower";
