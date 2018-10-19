@@ -787,7 +787,7 @@ method list ( --> List(Array) ) {
 The author doesn't use IPv6 in his setups. All the functionality provided here is developed using information from
 corresponding Wikipedia pages. Therefore, "here be dragons"©. Please, report back any issue encountered!
 
-=AUTHOR  cpan:VRURG <vrurg@cpan.org>
+=AUTHOR  Vadim Belman <vrurg@cpan.org>
 
 =end pod
 

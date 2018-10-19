@@ -2,6 +2,35 @@
 
 use v6.c;
 
+=begin pod
+
+=NAME    IP::Addr::Handler
+
+=head1 DESCRIPTION
+
+Base role for IP version classes.
+
+Most of the methods provided by this role are documented in U<HANDLER METHODS> section of C<IP::Addr> documentation.
+
+=head2 Attributes
+
+=head3 C<Str $.source>
+
+If object was initialized with a string then this attribute contains that string. Propagaded into new objects created
+using C<IP::Addr> C<dup> and C<dup-handler> methods. In other words, most of the methods/operators returning a new 
+object would propagade this attribute into it.
+
+=head3 C<IP-FORM $.form>
+
+Form of the current IP object. See C<IP::Addr::Common> and C<IP::Addr>.
+
+=head3 C<Int $.prefix-len>
+
+IP address prefix length. For ranges it would be 0 and for single IPs it would be equal to the result of C<addr-len>
+method.
+
+=end pod
+
 use IP::Addr::Common;
 
 my %bitcap-mask = (0..128).map: { $_ => 2**$_ - 1 }; # Mask for each bit capacity
@@ -25,12 +54,20 @@ has Int $!addr-bits = self.addr-len; # 32 for IPv4 and 128 for IPv6
 has Int $!n-tet-count = self.n-tets;
 has Int $!n-tet-size = (2 ** ( $!addr-bits / $!n-tet-count )).Int; # Size of octets or hextets in address (max-value+1)
 
+=begin pod
+
+=head2 Required Methods
+
+=end pod
+
+#| Must return a string containing formatted IP address with prefix length.
 method prefix { ... }
+#| Must return a number representing IP object version. I.e. I<4> for IPv4 and I<6> for IPv6.
 method version { ... }
+#| Described in IP::Addr documentation
 method ip-classes { ... }
-
+#| Formats an integer representation of IP address into string
 method int2str ( Int ) { ... }
-
 #| Returns number of bits in address
 method addr-len { ... }
 #| Returns number of octets/hextets in address
@@ -50,7 +87,7 @@ multi method set ( Int:D :$ip!, Int:D :$prefix-len! ) {
 }
 
 multi method set ( Int:D :$first!, Int:D :$last!, Int :$ip? ) {
-    #note "Set from Int first / Int last";
+    #note "+++++ Set from Int first / Int last";
     self!recalc( [ range,  { :$first, :$last } ] );
     $!addr = $ip if $ip.defined && ( $ip >= $!first-addr ) && ( $ip <= $!last-addr );
 }
@@ -371,17 +408,11 @@ method !recalc-range {
 
 =begin pod
 
-=NAME    IP::Addr::Handler
-=AUTHOR  cpan:VRURG <vrurg@cpan.org>
-=VERSION 0.0.0
+=AUTHOR  Vadim Belman <vrurg@cpan.org>
 
-=head1 Synopsis
+=head1 SEE ALSO
 
-=head1 Description
-
-=head1 Examples
-
-=head1 See also
+IP::Addr, IP::Addr::v4, IP::Addr::v6
 
 =end pod
 

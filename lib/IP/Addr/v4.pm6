@@ -2,6 +2,38 @@
 
 use v6.c;
 
+=begin pod
+
+=NAME    IP::Addr::v4
+
+=head1 DESCRIPTION
+
+Class implements IPv4 handler.
+
+=head2 Handler-specific methods
+
+=head3 C<broadcast>
+
+Returns C<IP::Addr> object representing broadcast address. Valid for CIDR form only.
+
+=head3 C<next-host>
+
+Similar to C<next> method but doesn't iterate over network and boradcast addresses.
+
+=head3 C<prev-host>
+
+Similar to C<prev> method but doesn't iterate over network and boradcast addresses.
+
+=head3 C<int-boradcast>
+
+Returns integer representation of the broadcast address.
+
+=head3 C<to-octets>
+
+IPv4 alias for C<to-n-tets>.
+
+=end pod
+
 use IP::Addr::Handler;
 use IP::Addr::Common;
 
@@ -213,18 +245,10 @@ method version ( --> 4 ) {}
 method n-tets ( --> 4 ) { }
 
 =begin pod
+=AUTHOR  Vadim Belman <vrurg@cpan.org>
+=head1 SEE ALSO
 
-=NAME    IP::Addr::v4
-=AUTHOR  cpan:VRURG <vrurg@cpan.org>
-=VERSION 0.0.0
-
-=head1 Synopsis
-
-=head1 Description
-
-=head1 Examples
-
-=head1 See also
+IP::Addr, IP::Addr::Handler
 
 =end pod
 

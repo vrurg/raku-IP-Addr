@@ -2,6 +2,63 @@
 
 use v6.c;
 
+=begin pod
+
+=NAME    IP::Addr::v6
+
+=head1 SYNOPSIS
+
+    my $ip = IP::Addr.new( "2001::/120", :abbreviated, :compact );
+    say $ip;                # 2001::/120
+
+    my $ip = IP::Addr.new( "2001::/120", :abbreviated, :!compact );
+    say $ip;                # 2001:0:0:0:0:0:0:0/120
+
+    my $ip = IP::Addr.new( "2001::/120", :!abbreviated, :!compact );
+    say $ip;                # 2001:0000:0000:0000:0000:0000:0000:0000/120
+
+    my $ip = IP::Addr.new( "2001:0000:0000:0000:0000:0000:0000:0000/120" );
+    say $ip;                # 2001:0000:0000:0000:0000:0000:0000:0000/120
+
+    my $ip = IP::Addr.new( "2001::/120" );
+    say $ip;                # 2001::/120
+
+=head1 DESCRIPTION
+
+Class implements IPv4 handler.
+
+When initialized from a string representation of a IPv6 address this handler tries to preserve the original formatting.
+E.g. it memorizes whether the source string had abbreviated hextets or was in compact form (contained I<::>). The 
+L<#SYNOPSIS> section demonstrates this behavior in the last two examples.
+
+=head2 Attributes
+
+=head3 C<$.scope>
+
+For a scoped IPv6 address this attribute contains its scope (i.e. – interface).
+
+=head3 C<Bool $.abbreviated>
+
+This attribute defines if hextets in string representation of IPv6 address would be in their full 4-digit form or
+abbreviated – i.e. leading zeroes dropped. If it is I<False> then C<$.compact> value is ignored when address is
+being stringified.
+
+=head3 C<Bool $.compact>
+
+If I<True> then address string representation will have longest streak of zero hextets compacted into I<::>.
+
+=head3 C<Bool $.mapped>
+
+This attribute is set by parser to I<True> if source string represents a IPv4 mapped form of IPv6.
+
+=head2 Methods
+
+=head3 C<to-hextets>
+
+Alias for C<to-n-tets> method.
+
+=end pod
+
 use IP::Addr::Handler;
 use IP::Addr::Common;
 
@@ -380,18 +437,23 @@ method ip-classes ( --> Array ) {
 }
 
 =begin pod
+=head1 EXAMPLES
 
-=NAME    IP::Addr::v6
-=AUTHOR  cpan:VRURG <vrurg@cpan.org>
-=VERSION 0.0.0
+    my $ip = IP::Addr.new( "2001::/120", :abbreviated, :!compact );
+    say $ip;                # 2001:0:0:0:0:0:0:0/120
+    $ip.abbreviated = False;
+    say $ip;                # 2001:0000:0000:0000:0000:0000:0000:0000/120
+    # Won't be in effect due to abbreviation being turned off
+    $ip.compact = True;     
+    say $ip;                # 2001:0000:0000:0000:0000:0000:0000:0000/120
+    # Now both abbreviation and compactness will be activated
+    $ip.abbreviated = True;
+    say $ip;                # 2001::/120
 
-=head1 Synopsis
+=AUTHOR  Vadim Belman <vrurg@cpan.org>
+=head1 SEE ALSO
 
-=head1 Description
-
-=head1 Examples
-
-=head1 See also
+IP::Addr, IP::Addr::Handler
 
 =end pod
 

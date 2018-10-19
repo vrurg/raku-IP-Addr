@@ -1,5 +1,55 @@
 #! /usr/bin/env false
 
+=begin pod
+
+=NAME    IP::Addr::Const
+
+=head1 DESCRIPTION
+
+This module contains common definitions for other modules of IP::Addr family.
+
+=head2 Constants And Enums
+
+=head3 enum SCOPE
+
+Defines scopes of reserved IP blocks.
+
+=begin table
+Scope | Version
+===============
+undetermined    | 4,6
+documentation   | 4,6
+host            | 4,6
+private         | 4,6
+public          | 4,6
+software        | 4,6
+subnet          | 4,6
+internet        | 6
+link            | 6
+routing         | 6
+=end table
+
+=head3 enum IP-FORM
+
+Forms of IP address objects:
+
+=item unknown
+=item ip
+=item cidr
+=item range
+
+=head2 Exceptions
+
+=head3 X::IPAddr::TypeCheck
+
+Raised when operation is performed on two objects of incompatible versions.
+
+=head3 X::IPAddr::BadMappedV6
+
+Raised when IPv6 is in IPv4 mapped format but incorrectly formed.
+
+=end pod
+
 use v6.c;
 
 unit module IP::Addr::Const;
@@ -32,17 +82,11 @@ class X::IPAddr::BadMappedV6 is Exception is export {
 
 =begin pod
 
-=NAME    IP::Addr::Const
-=AUTHOR  cpan:VRURG <vrurg@cpan.org>
-=VERSION 0.0.0
-
-=head1 Synopsis
-
-=head1 Description
-
-=head1 Examples
-
 =head1 See also
+
+IP::Addr
+
+=AUTHOR Vadim Belman <vrurg@cpan.org>
 
 =end pod
 
