@@ -5,7 +5,7 @@ use v6.c;
 use Test;
 use IP::Addr;
 
-plan 14;
+plan 19;
 
 my $ip = IP::Addr.new( "2001::da:beef" );
 
@@ -58,6 +58,17 @@ is $ip, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "decrement of ::";
 
 $ip = IP::Addr.new( "::" ) - 2;
 is $ip, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:fffe", ":: - 2";
+
+$ip = IP::Addr.new( "2001:0000:0000:0000:0000:0000:0000:0001", :abbreviated, :compact );
+is ~$ip, "2001::1", "formatting as abbreviated + compact";
+$ip = IP::Addr.new( "2001:0000:0000:0000:0000:0000:0000:0001", :abbreviated, :!compact );
+is ~$ip, "2001:0:0:0:0:0:0:1", "formatting as abbreviated + expaned";
+$ip = IP::Addr.new( "2001::1", :!abbreviated, :!compact );
+is ~$ip, "2001:0000:0000:0000:0000:0000:0000:0001", "formatting as non-abbreviated + expaned";
+$ip = IP::Addr.new( "2001::1" );
+is ~$ip, "2001::1", "formatting preserved: abbreviated + compact";
+$ip = IP::Addr.new( "2001:0:0:0:0:0:0:1" );
+is ~$ip, "2001:0:0:0:0:0:0:1", "formatting preserved: abbreviated + expaned";
 
 done-testing;
 # vim: ft=perl6 et sw=4
