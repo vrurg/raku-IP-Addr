@@ -521,16 +521,16 @@ multi submethod TWEAK () { }
 
 proto method set (|) { {*}; self }
 
-multi method set( Str:D $source ) { samewith( :$source ) }
+multi method set( Str:D $source, *%params ) { samewith( :$source, |%params ) }
 
-multi method set( Str:D :$source! ) {
+multi method set( Str:D :$source!, *%params ) {
     if is-ipv4( $source ) {
         #note "Creating IPv4 hander";
-        $!handler = IP::Addr::v4.new( :$source, :parent( self ) );
+        $!handler = IP::Addr::v4.new( :$source, :parent( self ), |%params );
     }
     elsif is-ipv6( $source ) {
         #note "Creating IPv6 hander";
-        $!handler = IP::Addr::v6.new( :$source, :parent( self ) );
+        $!handler = IP::Addr::v6.new( :$source, :parent( self ), |%params );
     }
     else {
         die "Unknown address format";
