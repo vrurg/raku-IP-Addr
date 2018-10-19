@@ -11,7 +11,6 @@ my $m = META6.new(
     perl-version   => Version.new('6.*'),
     depends        => [ ],
     test-depends   => <Test Test::META Test::When>,
-    build-depends  => <META6 p6doc Pod::To::Markdown>,
     tags           => <IP IPv4 IPv6>,
     authors        => ['Vadim Belman <vrurg@cpan.org>'],
     auth           => 'github:vrurg',
