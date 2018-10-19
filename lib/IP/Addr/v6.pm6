@@ -9,6 +9,8 @@ unit class IP::Addr::v6 does IP::Addr::Handler;
 
 use IP::Addr::v4;
 
+subset Trilean of Any where * ~~ Bool | Any:U;
+
 my %addr-class = 
     "::/0" => {
         scope => routing,
@@ -71,9 +73,9 @@ my %addr-class =
 has $.scope;
 
 # Compact IPv6 form without leading zeroes and zero hextets compacted
-has Bool $.abbreviated is rw = False;
+has Trilean $.abbreviated is rw;
 # Sub-modification of abbreviated. If False then zero hextets aren't compacted. Makes no sense if $.abbreviated is False
-has Bool $.compact is rw = False;
+has Trilean $.compact is rw;
 
 # IPv4 mapped address
 has Bool $.mapped is rw = False;
@@ -85,7 +87,7 @@ method new ( :$parent, |args ) {
     self.bless( :$parent, |args.hash ).set( |args )
 }
 
-submethod TWEAK ( :$!parent, :$!abbreviated = False, :$!compact = False, :$!mapped = False ) { }
+submethod TWEAK ( :$!parent, :$!abbreviated?, :$!compact?, :$!mapped = False ) { }
 
 grammar IPv6-Grammar does IPv4-Basic {
     rule TOP {
@@ -166,6 +168,8 @@ grammar IPv6-Grammar does IPv4-Basic {
 
 class v6-actions {
     has $.ip-obj;
+    has $!abbreviated = False;
+    has $!compact = False;
      
     method TOP ( $m ) { $m.make( $m<v6-variants>.ast ) }
     method v6-variants ( $m ) {
@@ -190,6 +194,8 @@ class v6-actions {
                 last;
             }
         }
+        $.ip-obj.abbreviated //= $!abbreviated;
+        $.ip-obj.compact //= $!compact;
         $m.make( $.ip-obj.to-int( @ip ) );
     }
 
@@ -232,19 +238,21 @@ class v6-actions {
         my @end = $m<sub-v6>[1].ast;
         my @zeroed = 0 xx ($*MAX-HEXTETS - @start.elems - @end.elems);
         $m.make( [ ( @start, @zeroed, @end ).flat ] );
-        $.ip-obj.abbreviated = $.ip-obj.compact = True;
+        # Abbreviation default depends on wether we've met any abbreviated hextet
+        $!abbreviated = $!compact = True;
     }
 
     method full-v6 ( $m ) {
-        $m.make( $m<hextet>.map: *.ast );
+        $m.make( ($m<hextet>.map: *.ast).List );
+        $!compact = False;
     }
 
     method sub-v6 ( $m ) {
-        $m.make( $m<hextet>.map: *.ast );
+        $m.make( ($m<hextet>.map: *.ast).List );
     }
 
     method hextet ( $m ) {
-        $.ip-obj.abbreviated ||= ( (~$m).chars < 4 );
+        $!abbreviated ||= ( (~$m).chars < 4 );
         $m.make( parse-base( ~$m, 16 ) )
     }
 
@@ -253,11 +261,17 @@ class v6-actions {
     }
 }
 
+proto method set (|) {
+    self!reset; 
+    {*}
+    $!abbreviated //= True;
+    $!compact //= True;
+    self
+}
+
 multi method set ( Str:D :$!source! ) {
-    #note "Set from Str source";
     my $m = IPv6-Grammar.parse( $!source, :actions( v6-actions.new( :ip-obj( self ) ) ) );
     die "Not a IPv6 address: '$!source'" unless $m;
-    #note "SET FROM AST:", $m.ast, " // ", $m.ast[1]<ip>.base(16);
     # TODO Exception if parse failed
     self!recalc( $m.ast );
 }
