@@ -497,7 +497,7 @@ I<True> if C<$addr1> is contained by C<$addr2>.
 
 use v6.c;
 
-unit class IP::Addr:ver<0.0.0>;
+unit class IP::Addr:ver<0.0.900>;
 
 use IP::Addr::Handler;
 use IP::Addr::v4;
