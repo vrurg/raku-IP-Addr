@@ -168,8 +168,8 @@ Configures the handler object.
 
     Configures a single IP form from integer octets for IPv4 or hextets for IPv6. Number of elements in @n-tets array is defined by the method of the same name.
 
-`add-len`
----------
+`addr-len`
+----------
 
 Returns number of bits for correponding IP version (*32* for IPv4 and *128* for IPv6).
 
@@ -188,7 +188,7 @@ Returns integer version of the IP object (*4* or *6*).
 
 Returns list of hashes of reserved IP ranges. Each hash has two keys:
 
-  * `net`
+  * *net*
 
     `IP::Addr` object representing the reserved range.
 
@@ -200,7 +200,25 @@ Returns list of hashes of reserved IP ranges. Each hash has two keys:
 
         Scopes are defined by `SCOPE` enum in `IP::Addr::Common`. Currently the following scopes are known:
 
-        *undetermined public software private host subnet documentation internet routing link*
+          * `undetermined`
+
+          * `mpublic`
+
+          * `software`
+
+          * `private`
+
+          * `host`
+
+          * `subnet`
+
+          * `documentation`
+
+          * `internet`
+
+          * `routing`
+
+          * `link`
 
         Of those `routing` and `link` are specific to IPv6. `public` isn't officially recognized but used to represent anything not been reserved. `undetermined` is also a special value to be returned if a requested range of IP addresses overlaps with a reserved range but isn't fully contained in it.
 
@@ -431,6 +449,11 @@ OPERATORS
 
 For all supported operators where both operands are addresses at least one of them has to be a `IP::Addr` object. The other one could be a string representation of an address.
 
+`prefix/postfix ++` and `prefix/postfix --`
+-------------------------------------------
+
+Standard Perl6 operatios working by calling `succ`/`pred` methods on `IP::Addr` object.
+
 `infix + ( $addr, $int )`
 -------------------------
 
@@ -490,9 +513,6 @@ Checks if two addresses are equal. See handler's `eq` method.
 ----------------------------
 
 *True* if `$addr1` is contained by `$addr2`.
-
-EXAMPLES
-========
 
 CAVEATS
 =======

@@ -190,7 +190,7 @@ Configures a single IP form from integer octets for IPv4 or hextets for IPv6. Nu
 defined by the method of the same name.
 =end item
 
-=head2 C<add-len>
+=head2 C<addr-len>
 
 Returns number of bits for correponding IP version (I<32> for IPv4 and I<128> for IPv6).
 
@@ -207,7 +207,7 @@ Returns integer version of the IP object (I<4> or I<6>).
 Returns list of hashes of reserved IP ranges. Each hash has two keys:
 
 =begin item
-C<net>
+I<net>
 
 C<IP::Addr> object representing the reserved range.
 =end item
@@ -222,7 +222,16 @@ I<scope>
 
 Scopes are defined by C<SCOPE> enum in C<IP::Addr::Common>. Currently the following scopes are known:
 
-I<undetermined public software private host subnet documentation internet routing link>
+=item C<undetermined>
+=item C<mpublic>
+=item C<software>
+=item C<private>
+=item C<host>
+=item C<subnet>
+=item C<documentation>
+=item C<internet>
+=item C<routing>
+=item C<link>
 
 Of those C<routing> and C<link> are specific to IPv6. C<public> isn't officially recognized but used to represent
 anything not been reserved. C<undetermined> is also a special value to be returned if a requested range of IP addresses
@@ -440,6 +449,10 @@ Stringifies current IP object with regard to its form.
 
 For all supported operators where both operands are addresses at least one of them has to be a C<IP::Addr> object. The
 other one could be a string representation of an address.
+
+=head2 C<prefix/postfix ++> and C<prefix/postfix -->
+
+Standard Perl6 operatios working by calling C<succ>/C<pred> methods on C<IP::Addr> object.
 
 =head2 C<infix + ( $addr, $int )>
 
@@ -779,8 +792,6 @@ method list ( --> List(Array) ) {
 }
 
 =begin pod
-
-=head1 EXAMPLES
 
 =head1 CAVEATS
 
