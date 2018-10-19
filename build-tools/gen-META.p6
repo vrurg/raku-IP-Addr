@@ -27,7 +27,7 @@ my $m = META6.new(
         'IP::Addr::v6'      => 'lib/IP/Addr/v6.pm6',
     },
     license        => 'Artistic-2.0',
-    production     => False,
+    production     => True,
 );
 
 print $m.to-json;
