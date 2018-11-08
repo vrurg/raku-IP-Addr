@@ -1,7 +1,4 @@
 #! /usr/bin/env perl6
-
-use Grammar::Tracer;
-
 use v6.c;
 
 use Test;
