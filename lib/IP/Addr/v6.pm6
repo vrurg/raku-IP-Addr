@@ -25,7 +25,7 @@ use v6.c;
 
 =head1 DESCRIPTION
 
-Class implements IPv4 handler.
+Class implements IPv6 handler.
 
 When initialized from a string representation of a IPv6 address this handler tries to preserve the original formatting.
 E.g. it memorizes whether the source string had abbreviated hextets or was in compact form (contained I<::>). The 
