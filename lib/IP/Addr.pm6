@@ -82,7 +82,7 @@ CIDR and ranges are I<ranged forms> contrary to a single IP form.
 =head3 N-tets
 
 As it is known IP addresses are represented by groups of integers called I<octets> for IPv4 and I<hextets> for IPv6
-(there are variantions but I chose these). I<N-tets> is used as a general term for both of them.
+(there are variations but I chose these two). I<N-tets> is used as a general term for both of them.
 
 =head1 METHODS
 
