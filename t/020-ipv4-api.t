@@ -1,5 +1,3 @@
-#! /usr/bin/env perl6
-
 use v6.c;
 
 use Test;
@@ -11,7 +9,7 @@ plan 2;
 
 subtest "Base methods" => {
     plan 4;
-    my @tests = 
+    my @tests =
         {
             src => "127.0.0.1",
             name => "Single IP",

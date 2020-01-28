@@ -1,5 +1,3 @@
-#! /usr/bin/env perl6
-
 use v6.c;
 
 use Test;
@@ -8,7 +6,7 @@ use IP::Addr;
 use IP::Addr::Common;
 
 subtest "Base methods" => {
-    my @tests = 
+    my @tests =
         {
             name => "Single IP, default",
             src => "2001:0db8:85a3:0000:0000:8a2e:0370:7334",

@@ -1,5 +1,3 @@
-#! /usr/bin/env perl6
-
 use v6.c;
 
 use Test;
@@ -37,8 +35,8 @@ subtest "CIDR" => {
     ok $ip ⊆ "10.11.12.0/24", "orig belongs to network defined with Str";
     nok $ip ⊆ "10.11.13.0/24", "doesn't belong to a network";
     ok $ip2 < $ip, "network is < than orig";
-    ok $ip2 <= $ip2, "network is <= than itself"; 
-    ok $ip2 ≤ "10.11.12.0/24", "network is <= then itself in Str form"; 
+    ok $ip2 <= $ip2, "network is <= than itself";
+    ok $ip2 ≤ "10.11.12.0/24", "network is <= then itself in Str form";
     is $ip cmp "10.11.12.20", Less, "cmp higher";
     is $ip cmp "10.11.12.13", Same, "cmp with same";
     is $ip cmp "10.11.12.1", More, "cmp with lower";
