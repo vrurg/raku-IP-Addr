@@ -15,9 +15,9 @@ my $m = META6.new(
     tags           => <IP IPv4 IPv6>,
     authors        => ['Vadim Belman <vrurg@cpan.org>'],
     auth           => 'github:vrurg',
-    source-url     => 'git://github.com/vrurg/perl6-IP-Addr.git',
+    source-url     => 'git://github.com/vrurg/raku-IP-Addr.git',
     support        => META6::Support.new(
-        source          => 'https://github.com/vrurg/perl6-IP-Addr.git',
+        source          => 'https://github.com/vrurg/raku-IP-Addr.git',
     ),
     provides => {
         'IP::Addr'          => 'lib/IP/Addr.pm6',
