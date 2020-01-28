@@ -452,7 +452,7 @@ For all supported operators where both operands are addresses at least one of th
 `prefix/postfix ++` and `prefix/postfix --`
 -------------------------------------------
 
-Standard Perl6 operatios working by calling `succ`/`pred` methods on `IP::Addr` object.
+Standard Raku operatios working by calling `succ`/`pred` methods on `IP::Addr` object.
 
 `infix + ( $addr, $int )`
 -------------------------

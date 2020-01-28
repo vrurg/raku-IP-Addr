@@ -1,43 +1,43 @@
 {
-  "auth": "github:vrurg",
   "license": "Artistic-2.0",
-  "build-depends": [
-    "META6",
-    "p6doc",
-    "Pod::To::Markdown"
+  "source-url": "git://github.com/vrurg/perl6-IP-Addr.git",
+  "depends": [
   ],
-  "test-depends": [
-    "Test",
-    "Test::META",
-    "Test::When"
-  ],
-  "description": "IPv4/IPv6 manipulation",
   "tags": [
     "IP",
     "IPv4",
     "IPv6"
   ],
-  "perl": "6.*",
+  "auth": "github:vrurg",
   "authors": [
     "Vadim Belman <vrurg@cpan.org>"
   ],
-  "source-url": "git://github.com/vrurg/perl6-IP-Addr.git",
+  "support": {
+    "source": "https://github.com/vrurg/perl6-IP-Addr.git"
+  },
+  "provides": {
+    "IP::Addr": "lib/IP/Addr.pm6",
+    "IP::Addr::Handler": "lib/IP/Addr/Handler.pm6",
+    "IP::Addr::v6": "lib/IP/Addr/v6.pm6",
+    "IP::Addr::v4": "lib/IP/Addr/v4.pm6",
+    "IP::Addr::Common": "lib/IP/Addr/Common.pm6"
+  },
+  "description": "IPv4/IPv6 manipulation",
+  "build-depends": [
+    "META6",
+    "p6doc",
+    "Pod::To::Markdown"
+  ],
   "production": true,
-  "depends": [
+  "meta-version": "0",
+  "name": "IP::Addr",
+  "version": "0.0.3",
+  "test-depends": [
+    "Test",
+    "Test::META",
+    "Test::When"
   ],
   "resources": [
   ],
-  "version": "0.0.3",
-  "meta-version": "0",
-  "provides": {
-    "IP::Addr::v6": "lib/IP/Addr/v6.pm6",
-    "IP::Addr::Handler": "lib/IP/Addr/Handler.pm6",
-    "IP::Addr::Common": "lib/IP/Addr/Common.pm6",
-    "IP::Addr::v4": "lib/IP/Addr/v4.pm6",
-    "IP::Addr": "lib/IP/Addr.pm6"
-  },
-  "name": "IP::Addr",
-  "support": {
-    "source": "https://github.com/vrurg/perl6-IP-Addr.git"
-  }
+  "perl": "6.*"
 }

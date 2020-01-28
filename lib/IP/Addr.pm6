@@ -452,7 +452,7 @@ other one could be a string representation of an address.
 
 =head2 C<prefix/postfix ++> and C<prefix/postfix -->
 
-Standard Perl6 operatios working by calling C<succ>/C<pred> methods on C<IP::Addr> object.
+Standard Raku operatios working by calling C<succ>/C<pred> methods on C<IP::Addr> object.
 
 =head2 C<infix + ( $addr, $int )>
 
