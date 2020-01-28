@@ -1,5 +1,4 @@
 #! /usr/bin/env false
-
 use v6.c;
 
 =begin pod
@@ -17,7 +16,7 @@ Most of the methods provided by this role are documented in U<HANDLER METHODS> s
 =head3 C<Str $.source>
 
 If object was initialized with a string then this attribute contains that string. Propagaded into new objects created
-using C<IP::Addr> C<dup> and C<dup-handler> methods. In other words, most of the methods/operators returning a new 
+using C<IP::Addr> C<dup> and C<dup-handler> methods. In other words, most of the methods/operators returning a new
 object would propagade this attribute into it.
 
 =head3 C<IP-FORM $.form>
@@ -32,8 +31,6 @@ method.
 =end pod
 
 use IP::Addr::Common;
-
-my %bitcap-mask = (0..128).map: { $_ => 2**$_ - 1 }; # Mask for each bit capacity
 
 unit role IP::Addr::Handler;
 
@@ -53,6 +50,8 @@ has Int $!wildcard;
 has Int $!addr-bits = self.addr-len; # 32 for IPv4 and 128 for IPv6
 has Int $!n-tet-count = self.n-tets;
 has Int $!n-tet-size = (2 ** ( $!addr-bits / $!n-tet-count )).Int; # Size of octets or hextets in address (max-value+1)
+
+my %bitcap-mask = (0..128).map: { $_ => 2**$_ - 1 }; # Mask for each bit capacity
 
 =begin pod
 
@@ -74,7 +73,7 @@ method addr-len { ... }
 method n-tets { ... }
 
 proto method set (|) {
-    self!reset; 
+    self!reset;
     {*}
     self
 }
@@ -102,7 +101,7 @@ multi method set( Int:D @octets where *.elems == $!n-tet-count ) {
 }
 
 method bitcap( Int $i, Int $bits = self.addr-len ) is export {
-    $i +& %bitcap-mask{ $bits } 
+    $i +& %bitcap-mask{ $bits }
 }
 
 method ip       { $.parent.dup-handler( ip => $!addr ) }
@@ -145,7 +144,7 @@ method add ( Int:D $count ) {
 
 sub term:<IP::Addr> () { once require IP::Addr }
 
-method !same-type ( $ip where * ~~ IP::Addr ) { 
+method !same-type ( $ip where * ~~ IP::Addr ) {
     X::IPAddr::TypeCheck.new.throw( :ip-list( self.parent, $ip ) ) unless self.version == $ip.version;
 }
 
@@ -169,32 +168,32 @@ multi method eq ( $ip where { $_.defined and $_ ~~ IP::Addr } --> Bool ) {
 
 proto method lt (|) { * }
 multi method lt ( ::?CLASS:D $ip --> Bool ) {
-    $!addr < $ip.int-ip 
+    $!addr < $ip.int-ip
 }
 multi method lt ( Str $addr --> Bool ) { samewith( self.WHAT.new( $addr ) ) }
 multi method lt ( $ip where { $_.defined and $_ ~~ IP::Addr } --> Bool ) {
     self!same-type( $ip );
-    samewith( $ip.handler ) 
+    samewith( $ip.handler )
 }
 
 proto method gt (|) { * }
 multi method gt ( ::?CLASS:D $ip --> Bool ) {
-    $!addr > $ip.int-ip 
+    $!addr > $ip.int-ip
 }
 multi method gt ( Str $addr --> Bool ) { samewith( self.WHAT.new( $addr ) ) }
 multi method gt ( $ip where { $_.defined and $_ ~~ IP::Addr } --> Bool ) {
     self!same-type( $ip );
-    samewith( $ip.handler ) 
+    samewith( $ip.handler )
 }
 
 proto method cmp (|) { * }
 multi method cmp ( ::?CLASS:D $ip --> Order ) {
-    ( $!addr || $!first-addr ) cmp ( $ip.int-ip || $ip.int-first-ip ); 
+    ( $!addr || $!first-addr ) cmp ( $ip.int-ip || $ip.int-first-ip );
 }
 multi method cmp ( Str:D $addr --> Order ) { samewith( self.WHAT.new( $addr ) ) }
 multi method cmp ( $ip where { $_.defined and $_ ~~ IP::Addr } --> Bool ) {
     self!same-type( $ip );
-    samewith( $ip.handler ) 
+    samewith( $ip.handler )
 }
 
 proto method contains (|) { * }
@@ -204,21 +203,21 @@ multi method contains ( ::?CLASS:D $ip --> Bool ) {
 multi method contains ( Str $addr --> Bool ) { samewith( self.WHAT.new( $addr ) ) }
 multi method contains ( $ip where { $_.defined and $_ ~~ IP::Addr } --> Bool ) {
     self!same-type( $ip );
-    samewith( $ip.handler ) 
+    samewith( $ip.handler )
 }
 
 proto method overlaps (|) { * }
 multi method overlaps ( ::?CLASS:D $ip --> Bool ) {
-    return 
+    return
         ( $!first-addr ≥ $ip.int-first-ip and $!first-addr ≤ $ip.int-last-ip ) ||
         ( $!last-addr ≥ $ip.int-first-ip and $!last-addr ≤ $ip.int-last-ip ) ||
         ( $ip.int-first-ip ≥ $!first-addr and $ip.int-first-ip ≤ $!last-addr ) ||
-        ( $ip.int-last-ip ≥ $!first-addr and $ip.int-last-ip ≤ $!last-addr ) 
+        ( $ip.int-last-ip ≥ $!first-addr and $ip.int-last-ip ≤ $!last-addr )
 }
 multi method overlaps ( Str $addr --> Bool ) { samewith( self.WHAT.new( $addr ) ) }
 multi method overlaps ( $ip where { $_.defined and $_ ~~ IP::Addr } --> Bool ) {
     self!same-type( $ip );
-    samewith( $ip.handler ) 
+    samewith( $ip.handler )
 }
 
 method first {
@@ -275,10 +274,10 @@ method prev-range {
 }
 
 proto method to-int (|) { * }
-multi method to-int ( @ntets where { $_.elems ≤ self.n-tets } --> Int ) { 
+multi method to-int ( @ntets where { $_.elems ≤ self.n-tets } --> Int ) {
     my Int $int-ip = 0;
-    $int-ip = $int-ip * $!n-tet-size + $_ for @ntets; 
-    self.bitcap( $int-ip ) 
+    $int-ip = $int-ip * $!n-tet-size + $_ for @ntets;
+    self.bitcap( $int-ip )
 }
 multi method to-int ( *@ntets where { $_.elems ≤ self.n-tets } --> Int ) { samewith( @ntets ) }
 
@@ -305,7 +304,7 @@ method info {
     return { scope => public, description => "public IP" }
 }
 
-method Str { 
+method Str {
     #note ".Str";
     given $!form {
         when ip { return self.int2str( $!addr ); }
@@ -318,17 +317,17 @@ method Str {
 }
 
 method !bits2mask ( Int $bits ) {
-    %bitcap-mask{ $!addr-bits } +& +^ (2**($!addr-bits - $bits) - 1) 
+    %bitcap-mask{ $!addr-bits } +& +^ (2**($!addr-bits - $bits) - 1)
 }
 
 method !pfx2mask( Int $len ) { # Subject for is cached trait
     state %pfx2mask; # Prefix length into network mask
 
     unless %pfx2mask{ $!addr-bits } {
-        %pfx2mask{ $!addr-bits } = %( 
+        %pfx2mask{ $!addr-bits } = %(
             (0..$!addr-bits).map: {
                 $_ => self!bits2mask( $_ )
-            } 
+            }
         );
     }
 
@@ -342,7 +341,7 @@ method !mask2pfx ( Int $mask ) {
         %mask2pfx{ $!addr-bits } = %(
             (0..$!addr-bits).map: {
                 self!bits2mask( $_ ) => $_
-            } 
+            }
         );
     }
 
@@ -397,7 +396,7 @@ method !recalc-wildcard {
     $!wildcard = +^ self.bitcap( $!mask );
 }
 
-method !recalc-prefix-len { 
+method !recalc-prefix-len {
     $!prefix-len = self!mask2pfx( $!mask );
 }
 
