@@ -55,7 +55,7 @@ I<ip>
 Simple IP address. It has prefix length of 32 bits.
 =end item
 
-=begin item 
+=begin item
 I<cidr>
 
 CIDR form is an IP address with I<prefix> defined.
@@ -287,7 +287,7 @@ is officially no such thing for them.
 Returns string representation of current IP object wildcard. Doesn't make much sense for IPv6 addresses because there
 is officially no such thing for them.
 
-=head2 C<size> 
+=head2 C<size>
 
 Returns number of IP addresses contained in the current C<IP::Addr> object. For example:
 
@@ -510,7 +510,7 @@ I<True> if C<$addr1> is contained by C<$addr2>.
 
 use v6.c;
 
-unit class IP::Addr:ver<0.0.2>;
+unit class IP::Addr:ver<0.0.3>;
 
 use IP::Addr::Handler;
 use IP::Addr::v4;

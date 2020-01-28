@@ -71,7 +71,7 @@ CIDR and ranges are *ranged forms* contrary to a single IP form.
 
 ### N-tets
 
-As it is known IP addresses are represented by groups of integers called *octets* for IPv4 and *hextets* for IPv6 (there are variantions but I chose these). *N-tets* is used as a general term for both of them.
+As it is known IP addresses are represented by groups of integers called *octets* for IPv4 and *hextets* for IPv6 (there are variations but I chose these two). *N-tets* is used as a general term for both of them.
 
 METHODS
 =======
@@ -272,8 +272,8 @@ Returns string representation of the current IP object mask. Doesn't make much s
 
 Returns string representation of current IP object wildcard. Doesn't make much sense for IPv6 addresses because there is officially no such thing for them.
 
-`size` 
--------
+`size`
+------
 
 Returns number of IP addresses contained in the current `IP::Addr` object. For example:
 
