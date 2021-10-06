@@ -519,6 +519,11 @@ CAVEATS
 
 The author doesn't use IPv6 in his setups. All the functionality provided here is developed using information from corresponding Wikipedia pages. Therefore, "here be dragons"©. Please, report back any issue encountered!
 
+SEE ALSO
+========
+
+[ChangeLog](ChangeLog.md)
+
 AUTHOR
 ======
 
