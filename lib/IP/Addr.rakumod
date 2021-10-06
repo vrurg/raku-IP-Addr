@@ -510,7 +510,7 @@ I<True> if C<$addr1> is contained by C<$addr2>.
 
 use v6.c;
 
-unit class IP::Addr:ver<0.0.3>:auth<zef:vrurg>:api<0.0.1>;
+unit class IP::Addr:ver<0.0.4>:auth<zef:vrurg>:api<0.0.1>;
 
 use IP::Addr::Handler;
 use IP::Addr::v4;

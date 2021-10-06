@@ -1,34 +1,33 @@
 {
-  "support": {
-    "source": "https://github.com/vrurg/raku-IP-Addr.git"
-  },
-  "license": "Artistic-2.0",
-  "version": "0.0.3",
-  "depends": [
-  ],
+  "api": "0.0.1",
+  "auth": "zef:vrurg",
   "authors": [
     "Vadim Belman <vrurg@cpan.org>"
   ],
-  "perl": "6.*",
-  "production": true,
-  "provides": {
-    "IP::Addr::Handler": "lib/IP/Addr/Handler.pm6",
-    "IP::Addr": "lib/IP/Addr.pm6",
-    "IP::Addr::v4": "lib/IP/Addr/v4.pm6",
-    "IP::Addr::v6": "lib/IP/Addr/v6.pm6",
-    "IP::Addr::Common": "lib/IP/Addr/Common.pm6"
-  },
-  "auth": "github:vrurg",
   "build-depends": [
-    "META6",
-    "p6doc",
-    "Pod::To::Markdown"
+    "META6"
   ],
-  "source-url": "git://github.com/vrurg/raku-IP-Addr.git",
-  "name": "IP::Addr",
-  "resources": [
+  "depends": [
   ],
   "description": "IPv4/IPv6 manipulation",
+  "license": "Artistic-2.0",
+  "meta-version": "0",
+  "name": "IP::Addr",
+  "production": true,
+  "provides": {
+    "IP::Addr": "lib/IP/Addr.rakumod",
+    "IP::Addr::Common": "lib/IP/Addr/Common.rakumod",
+    "IP::Addr::Handler": "lib/IP/Addr/Handler.rakumod",
+    "IP::Addr::v4": "lib/IP/Addr/v4.rakumod",
+    "IP::Addr::v6": "lib/IP/Addr/v6.rakumod"
+  },
+  "raku": null,
+  "resources": [
+  ],
+  "source-url": "https://github.com/vrurg/raku-IP-Addr.git",
+  "support": {
+    "source": "https://github.com/vrurg/raku-IP-Addr.git"
+  },
   "tags": [
     "IP",
     "IPv4",
@@ -39,5 +38,5 @@
     "Test::META",
     "Test::When"
   ],
-  "meta-version": "0"
+  "version": "0.0.4"
 }
