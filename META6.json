@@ -5,7 +5,6 @@
     "Vadim Belman <vrurg@cpan.org>"
   ],
   "build-depends": [
-    "META6"
   ],
   "depends": [
   ],
@@ -21,7 +20,7 @@
     "IP::Addr::v4": "lib/IP/Addr/v4.rakumod",
     "IP::Addr::v6": "lib/IP/Addr/v6.rakumod"
   },
-  "raku": null,
+  "raku": "6.*",
   "resources": [
   ],
   "source-url": "https://github.com/vrurg/raku-IP-Addr.git",
