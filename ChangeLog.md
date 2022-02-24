@@ -6,6 +6,13 @@ CHANGELOG
 head
 ====
 
+v0.0.6
+
+  * Dependency clean up
+
+head
+====
+
 v0.0.5
 
   * Fix README
