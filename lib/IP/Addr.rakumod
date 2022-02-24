@@ -1,5 +1,5 @@
 use v6.c;
-unit class IP::Addr:ver<0.0.5>:auth<zef:vrurg>:api<0.0.1>;
+unit class IP::Addr:ver($?DISTRIBUTION.meta<ver>):auth($?DISTRIBUTION.meta<api>):api($?DISTRIBUTION.meta<api>);
 
 use IP::Addr::Handler;
 use IP::Addr::v4;
@@ -281,32 +281,7 @@ method list ( --> List(Array) ) {
 }
 
 our sub META6 {
-    use META6;
-    name           => 'IP::Addr',
-    description    => 'IPv4/IPv6 manipulation',
-    version        => IP::Addr.^ver,
-    api            => IP::Addr.^api,
-    perl-version   => Version.new('6.*'),
-    raku-version   => Version.new('6.*'),
-    depends        => [ ],
-    test-depends   => <Test Test::META Test::When>,
-    #build-depends  => <META6>,
-    tags           => <IP IPv4 IPv6>,
-    authors        => ['Vadim Belman <vrurg@cpan.org>'],
-    auth           => IP::Addr.^auth,
-    source-url     => 'https://github.com/vrurg/raku-IP-Addr.git',
-    support        => META6::Support.new(
-        source          => 'https://github.com/vrurg/raku-IP-Addr.git',
-    ),
-    provides => {
-        'IP::Addr'          => 'lib/IP/Addr.rakumod',
-        'IP::Addr::Common'  => 'lib/IP/Addr/Common.rakumod',
-        'IP::Addr::Handler' => 'lib/IP/Addr/Handler.rakumod',
-        'IP::Addr::v4'      => 'lib/IP/Addr/v4.rakumod',
-        'IP::Addr::v6'      => 'lib/IP/Addr/v6.rakumod',
-    },
-    license        => 'Artistic-2.0',
-    production     => True,
+    $?DISTRIBUTION.meta
 }
 
 # vim: ft=perl6 et sw=4

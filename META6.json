@@ -4,10 +4,6 @@
   "authors": [
     "Vadim Belman <vrurg@cpan.org>"
   ],
-  "build-depends": [
-  ],
-  "depends": [
-  ],
   "description": "IPv4/IPv6 manipulation",
   "license": "Artistic-2.0",
   "meta-version": "0",
@@ -21,8 +17,6 @@
     "IP::Addr::v6": "lib/IP/Addr/v6.rakumod"
   },
   "raku": "6.*",
-  "resources": [
-  ],
   "source-url": "https://github.com/vrurg/raku-IP-Addr.git",
   "support": {
     "source": "https://github.com/vrurg/raku-IP-Addr.git"
@@ -37,5 +31,5 @@
     "Test::META",
     "Test::When"
   ],
-  "version": "0.0.5"
+  "version": "0.0.6"
 }
