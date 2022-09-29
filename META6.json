@@ -19,7 +19,7 @@
   "raku": "6.*",
   "source-url": "https://github.com/vrurg/raku-IP-Addr.git",
   "support": {
-    "source": "https://github.com/vrurg/raku-IP-Addr"
+    "source": "https://github.com/vrurg/raku-IP-Addr.git"
   },
   "tags": [
     "IP",
