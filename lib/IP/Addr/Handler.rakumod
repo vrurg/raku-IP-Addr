@@ -34,7 +34,7 @@ use IP::Addr::Common;
 
 unit role IP::Addr::Handler;
 
-has $.parent is required is rw; # IP::Addr object
+has $.parent is required; # IP::Addr object
 
 has Str $.source;
 has IP-FORM $.form;
