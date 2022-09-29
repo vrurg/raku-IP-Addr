@@ -1,27 +1,21 @@
 use v6.c;
-unit class IP::Addr:ver<0.0.902>:auth<zef:vrurg>:api<0.0.1>;
+unit class IP::Addr:ver($?DISTRIBUTION.meta<ver>):auth($?DISTRIBUTION.meta<api>):api($?DISTRIBUTION.meta<api>);
 
 use IP::Addr::Handler;
 use IP::Addr::v4;
 use IP::Addr::v6;
 
-has IP::Addr::Handler $.handler handles **;
+has IP::Addr::Handler $.handler handles *;
 
-proto method new (|) { * }
-multi method new ( IP::Addr::Handler:D :$handler! ) {
+proto method new(|) {*}
+multi method new( IP::Addr::Handler:D :$handler! ) {
     self.bless( :$handler )
 }
-multi method new ( |args ) {
+multi method new( |args ) {
     self.bless.set( |args )
 }
 
-multi submethod TWEAK ( IP::Addr::Handler:D :$!handler ) {
-    #note "TWEAK WITH handler";
-    $!handler.parent = self;
-}
-multi submethod TWEAK () { }
-
-proto method set (|) { {*}; self }
+proto method set(|) { {*}; self }
 
 multi method set( Str:D $source, *%params ) { samewith( :$source, |%params ) }
 
@@ -39,7 +33,7 @@ multi method set( Str:D :$source!, *%params ) {
     }
 }
 
-multi method set( :$v4?, :$v6?, *%params ) {
+multi method set( :$v4, :$v6, *%params ) {
     if $v4 {
         $!handler = IP::Addr::v4.new( :parent( self ), |%params );
     }
@@ -52,177 +46,178 @@ multi method set( :$v4?, :$v6?, *%params ) {
 }
 
 method Str { $!handler.Str }
-multi method gist ( ::?CLASS:D: --> Str) { self.handler.Str }
-multi method gist ( ::?CLASS:U: ) { nextsame }
+multi method gist( ::?CLASS:D: --> Str ) { $!handler.Str }
+multi method gist( ::?CLASS:U: ) { nextsame }
 
-multi infix:<+> ( IP::Addr:D $ip, Int:D $count ) is export {
+multi infix:<+>( IP::Addr:D $ip, Int:D $count ) is export {
     $ip.dup.add( $count )
 }
 
-multi infix:<+> ( Int:D $count, IP::Addr:D $ip ) is export {
+multi infix:<+>( Int:D $count, IP::Addr:D $ip ) is export {
     $ip.dup.add( $count )
 }
 
-multi infix:<-> ( IP::Addr:D $ip, Int:D $count ) is export {
+multi infix:<->( IP::Addr:D $ip, Int:D $count ) is export {
     $ip.dup.add( -$count )
 }
 
-multi infix:<cmp> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<cmp>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.cmp( $b )
 }
 
-multi infix:<cmp> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<cmp>( IP::Addr:D $a, Str:D $b ) is export {
     $a.cmp( $b )
 }
 
-multi infix:<cmp> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<cmp>( Str:D $a, IP::Addr:D $b ) is export {
     $b.dup-handler( $a ).cmp( $b )
 }
 
-multi infix:<eqv> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<eqv>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.eq( $b )
 }
 
-multi infix:<eqv> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<eqv>( IP::Addr:D $a, Str:D $b ) is export {
     $a.eq( $b )
 }
 
-multi infix:<eqv> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<eqv>( Str:D $a, IP::Addr:D $b ) is export {
     $b.dup-handler( $a ).eq( $b )
 }
 
-multi infix:<==> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<==>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.eq( $b )
 }
 
-multi infix:<==> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<==>( IP::Addr:D $a, Str:D $b ) is export {
     $a.eq( $b )
 }
 
-multi infix:<==> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<==>( Str:D $a, IP::Addr:D $b ) is export {
     $b.dup-handler( $a ).eq( $b )
 }
 
-multi infix:<< < >> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<< < >>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.lt( $b )
 }
 
-multi infix:<< < >> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<< < >>( IP::Addr:D $a, Str:D $b ) is export {
     $a.lt( $b )
 }
 
-multi infix:<< < >> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<< < >>( Str:D $a, IP::Addr:D $b ) is export {
     $b.dup-handler( $a ).lt( $b )
 }
 
-multi infix:<< <= >> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<< <= >>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.lt( $b ) or $a.eq( $b )
 }
 
-multi infix:<< <= >> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<< <= >>( IP::Addr:D $a, Str:D $b ) is export {
     $a.lt( $b ) or $a.eq( $b )
 }
 
-multi infix:<< <= >> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<< <= >>( Str:D $a, IP::Addr:D $b ) is export {
     my $ip-a = $b.dup-handler( $a );
     $ip-a.lt( $b ) or $ip-a.eq( $b )
 }
 
-multi infix:<< ≤ >> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<< ≤ >>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.lt( $b ) or $a.eq( $b )
 }
 
-multi infix:<< ≤ >> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<< ≤ >>( IP::Addr:D $a, Str:D $b ) is export {
     $a.lt( $b ) or $a.eq( $b )
 }
 
-multi infix:<< ≤ >> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<< ≤ >>( Str:D $a, IP::Addr:D $b ) is export {
     my $ip-a = $b.dup-handler( $a );
     $ip-a.lt( $b ) or $ip-a.eq( $b )
 }
 
-multi infix:<< > >> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<< > >>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.gt( $b )
 }
 
-multi infix:<< > >> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<< > >>( IP::Addr:D $a, Str:D $b ) is export {
     $a.gt( $b )
 }
 
-multi infix:<< > >> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<< > >>( Str:D $a, IP::Addr:D $b ) is export {
     $b.dup-handler( $a ).gt( $b )
 }
 
-multi infix:<< >= >> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<< >= >>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.gt( $b ) or $a.eq( $b )
 }
 
-multi infix:<< >= >> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<< >= >>( IP::Addr:D $a, Str:D $b ) is export {
     $a.gt( $b ) or $a.eq( $b )
 }
 
-multi infix:<< >= >> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<< >= >>( Str:D $a, IP::Addr:D $b ) is export {
     my $ip-a = $b.dup-handler( $a );
     $ip-a.gt( $b ) or $ip-a.eq( $b )
 }
 
-multi infix:<< ≥ >> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<< ≥ >>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.gt( $b ) or $a.eq( $b )
 }
 
-multi infix:<< ≥ >> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<< ≥ >>( IP::Addr:D $a, Str:D $b ) is export {
     $a.gt( $b ) or $a.eq( $b )
 }
 
-multi infix:<< ≥ >> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<< ≥ >>( Str:D $a, IP::Addr:D $b ) is export {
     my $ip-a = $b.dup-handler( $a );
     $ip-a.gt( $b ) or $ip-a.eq( $b )
 }
 
-multi infix:<(cont)> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<(cont)>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.contains( $b )
 }
 
-multi infix:<(cont)> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<(cont)>( IP::Addr:D $a, Str:D $b ) is export {
     $a.contains( $b )
 }
 
-multi infix:<(cont)> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<(cont)>( Str:D $a, IP::Addr:D $b ) is export {
     $b.dup-handler( $a ).contains( $b )
 }
 
-multi infix:<⊇> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<⊇>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $a.contains( $b )
 }
 
-multi infix:<⊇> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<⊇>( IP::Addr:D $a, Str:D $b ) is export {
     $a.contains( $b )
 }
 
-multi infix:<⊇> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<⊇>( Str:D $a, IP::Addr:D $b ) is export {
     $b.dup-handler( $a ).contains( $b )
 }
 
-multi infix:<⊆> ( IP::Addr:D $a, IP::Addr:D $b ) is export {
+multi infix:<⊆>( IP::Addr:D $a, IP::Addr:D $b ) is export {
     $b.contains( $a )
 }
 
-multi infix:<⊆> ( IP::Addr:D $a, Str:D $b ) is export {
+multi infix:<⊆>( IP::Addr:D $a, Str:D $b ) is export {
     $a.dup-handler( $b ).contains( $a )
 }
 
-multi infix:<⊆> ( Str:D $a, IP::Addr:D $b ) is export {
+multi infix:<⊆>( Str:D $a, IP::Addr:D $b ) is export {
     $b.contains( $a )
 }
 
-proto method dup (|) {
-    my $dup = {*};
-    $dup.handler.parent = $dup;
-    $dup
+method !dup-handler {
+    $!handler .= clone( :parent(self) );
+    self
 }
 
+proto method dup (|) {*}
+
 multi method dup {
-    self.clone( :handler( $.handler.clone ) )
+    self.clone()!dup-handler
 }
 
 multi method dup ( :$handler! ) {
@@ -230,8 +225,7 @@ multi method dup ( :$handler! ) {
 }
 
 method dup-handler( |args ) {
-    my $dup = self.clone( :handler( $.handler.clone ) );
-    $dup.handler.parent = $dup;
+    my $dup = self.clone()!dup-handler;
     $dup.handler.set( |args );
     $dup
 }
@@ -281,32 +275,7 @@ method list ( --> List(Array) ) {
 }
 
 our sub META6 {
-    use META6;
-    name           => 'IP::Addr',
-    description    => 'IPv4/IPv6 manipulation',
-    version        => IP::Addr.^ver,
-    api            => IP::Addr.^api,
-    perl-version   => Version.new('6.*'),
-    raku-version   => Version.new('6.*'),
-    depends        => [ ],
-    test-depends   => <Test Test::META Test::When>,
-    #build-depends  => <META6>,
-    tags           => <IP IPv4 IPv6>,
-    authors        => ['Vadim Belman <vrurg@cpan.org>'],
-    auth           => IP::Addr.^auth,
-    source-url     => 'https://github.com/vrurg/raku-IP-Addr.git',
-    support        => META6::Support.new(
-        source          => 'https://github.com/vrurg/raku-IP-Addr.git',
-    ),
-    provides => {
-        'IP::Addr'          => 'lib/IP/Addr.rakumod',
-        'IP::Addr::Common'  => 'lib/IP/Addr/Common.rakumod',
-        'IP::Addr::Handler' => 'lib/IP/Addr/Handler.rakumod',
-        'IP::Addr::v4'      => 'lib/IP/Addr/v4.rakumod',
-        'IP::Addr::v6'      => 'lib/IP/Addr/v6.rakumod',
-    },
-    license        => 'Artistic-2.0',
-    production     => True,
+    $?DISTRIBUTION.meta
 }
 
 # vim: ft=perl6 et sw=4

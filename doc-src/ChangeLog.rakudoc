@@ -1,6 +1,15 @@
 =begin pod
 =CHANGELOG
 
+=head v0.0.6
+
+=item Dependency clean up
+
+=head v0.0.5
+
+=item Fix README
+=item Rename all test files into .rakutest
+
 =head v0.0.4
 
 No functionality changes, migrating to my custom build-tools toolchain and to zef ecosystem.
