@@ -4,7 +4,7 @@
   "authors": [
     "Vadim Belman <vrurg@cpan.org>"
   ],
-  "description": "IPv4/IPv6 manipulation",
+  "description": "Work with IPv4/IPv6",
   "license": "Artistic-2.0",
   "meta-version": "0",
   "name": "IP::Addr",
@@ -19,7 +19,7 @@
   "raku": "6.*",
   "source-url": "https://github.com/vrurg/raku-IP-Addr.git",
   "support": {
-    "source": "https://github.com/vrurg/raku-IP-Addr.git"
+    "source": "https://github.com/vrurg/raku-IP-Addr"
   },
   "tags": [
     "IP",
@@ -31,5 +31,5 @@
     "Test::META",
     "Test::When"
   ],
-  "version": "0.0.6"
+  "version": "0.0.7"
 }
